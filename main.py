@@ -19,9 +19,21 @@ def main():
     article_count = int(user_input) if user_input else 2
 
     print(f"Selected number of articles: {article_count}")
-    # Initialize summarizer and process selected articles
-    summarizer = NewsSummarizer()
-    results = summarizer.process_articles(limit=article_count)
+    # Initialize summarizer and handle potential errors
+    try:
+        summarizer = NewsSummarizer()
+        results = summarizer.process_articles(limit=article_count)
+
+    except Exception as e:
+        print(f"Error processing news articles: {e}")
+        print("Please check your API connection and try again.")
+        return
+
+    # Check if any articles were returned
+    if not results:
+        print("No news articles were found.")
+        print("Please try again later.")
+        return
 
     # Display processed articles
     for index, article in enumerate(results, start=1):
@@ -35,7 +47,7 @@ def main():
 
         print(f"\nSummary:\n{article['summary']}")
         print(f"\nSentiment:\n{article['sentiment']}")
-        
+
     # Display cost summary
     budget_summary = summarizer.llm.budget_manager.get_summary()
 
